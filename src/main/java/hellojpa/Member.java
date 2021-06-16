@@ -3,10 +3,7 @@ package hellojpa;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter @Setter
@@ -18,7 +15,11 @@ public class Member {
 
     @Column(name = "USERNAME")
     private String username;
-
+/*
     @Column(name = "TEAM_ID")
-    private Long teanId;
+    private Long teanId;*/
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 }
