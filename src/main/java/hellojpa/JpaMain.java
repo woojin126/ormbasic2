@@ -18,7 +18,8 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try{
-      /*      Team team = new Team();
+      /*    N : 1
+       Team team = new Team();
             team.setName("TeamA");
             em.persist(team); //pk값이 정해지고 영속상태가됨
 
@@ -48,7 +49,8 @@ public class JpaMain {
             Team newTeam = em.find(Team.class,100L);
             findMember.setTeam(newTeam);
 */
-           // 양방향 연관관계의 예제
+
+   /*        // 양방향 연관관계의 예제 N:1
 
             Team team = new Team();
             team.setName("TeamA");
@@ -69,9 +71,20 @@ public class JpaMain {
             }
 
             Member findMember = em.find(Member.class,member.getId());
-            System.out.println("getName"+findMember.getTeam().getName());
+            System.out.println("getName"+findMember.getTeam().getName());*/
 
+            //1 : N 단방향 관계
 
+            Member member = new Member();
+            member.setUsername("member1");
+
+            em.persist(member);
+
+            Team team = new Team();
+            team.setName("teamA");
+            team.getMembers().add(member); //이로직때문에 update 쿼리가 한번더나감 문제1
+                                            //1:N의 엄청 복잡해짐 테이블이 많아질수록 문제2
+            em.persist(team);
 
             tx.commit();
 
