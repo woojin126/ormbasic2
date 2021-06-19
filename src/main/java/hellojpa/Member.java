@@ -15,6 +15,10 @@ public class Member {
 
     @Column(name = "USERNAME")
     private String username;
+
+    @OneToOne
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
 /*
     @Column(name = "TEAM_ID")
     private Long teanId;*/
@@ -29,4 +33,12 @@ public class Member {
         this.team=team;
         team.getMembers().add(this);
     }*/
+
+
+    /*Member Set*/
+
+    public void changeLocker(Locker locker){
+        this.locker = locker;
+        locker.setMember(this);
+    }
 }
