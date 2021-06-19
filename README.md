@@ -70,5 +70,9 @@ Product Entity생성
     private Long id;
 
     private String name;
+    
+    //양방향을 원한다면 추가
+    @ManyToMany(mappedBy = "products")
+    private List<Member> members = new ArrayList<>();
 
 ```
