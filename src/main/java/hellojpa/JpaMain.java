@@ -73,7 +73,7 @@ public class JpaMain {
             Member findMember = em.find(Member.class,member.getId());
             System.out.println("getName"+findMember.getTeam().getName());*/
 
-            //1 : N 단방향 관계
+         /*   //1 : N 단방향 관계
 
             Member member = new Member();
             member.setUsername("member1");
@@ -84,10 +84,26 @@ public class JpaMain {
             team.setName("teamA");
             team.getMembers().add(member); //이로직때문에 update 쿼리가 한번더나감 문제1
                                             //1:N의 엄청 복잡해짐 테이블이 많아질수록 문제2
-            em.persist(team);
+            em.persist(team);*/
+
+            Locker locker = new Locker();
+            locker.setName("사물함1");
+            em.persist(locker);
+
+            Locker lockers = em.find(Locker.class, locker.getId());
+
+
+
+            Member member = new Member();
+            member.setUsername("사용자1");
+            member.changeLocker(locker);
+            log.info("memberValue={},",member.getLocker());
+            log.info("lockerValue={}",lockers.getMember());
+            em.persist(member);
+
 
             tx.commit();
-            
+
 
             
         }catch(Exception e){
