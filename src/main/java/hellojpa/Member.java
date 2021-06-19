@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -36,6 +38,18 @@ public class Member {
 
 
     /*Member Set*/
+
+    /*M:N 다대다 관계 의 잘못된 예제*/
+  /*  @ManyToMany
+    @JoinTable(name = "MEMBER_PRODUCT")
+    private List<Product> products = new ArrayList<>();*/
+
+    //M:N 다대다 관계의 옳바른 예제 ( 1:다 다:1로 풀어내버리기)
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
+
+
 
     public void changeLocker(Locker locker){
         this.locker = locker;
