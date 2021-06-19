@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 
 
 /*ormbasic2 깃허브연결*/
@@ -88,7 +89,10 @@ public class JpaMain {
                                             //1:N의 엄청 복잡해짐 테이블이 많아질수록 문제2
             em.persist(team);*/
 
-            Locker locker = new Locker();
+
+          /*
+           1:1 관계 매핑
+           Locker locker = new Locker();
             locker.setName("사물함1");
             em.persist(locker);
 
@@ -102,8 +106,35 @@ public class JpaMain {
             log.info("memberValue={},",member.getLocker());
             log.info("lockerValue={}",lockers.getMember());
             em.persist(member);
+*/
 
+          /*  //상속관계 전략마다 테이블 생성, 관계 방식
+            Movie movie = new Movie();
+            movie.setDirector("AAAA");
+            movie.setActor("BBBB");
+            movie.setName("바람과함께 사라지다");
+            movie.setPrice(10000);
 
+            em.persist(movie);
+
+            em.flush();  //디비에 이시점에 다넣음 1차캐시남음
+            em.clear(); //영속성컨텍스트에 db를 깔끔히정리
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMove = " + findMovie); //find 하려면 조인해서 가져옴*/
+
+            //@MappedSuperclass
+            Member member = new Member();
+            member.setUsername("user1");
+            member.setCreateBy("kim");
+            member.setCreateDate(LocalDateTime.now());
+
+            em.persist(member);
+
+            //em.find(BaseEntity.class)//이런거안됨
+
+            em.flush();
+            em.clear();
             tx.commit();
 
 
