@@ -53,3 +53,22 @@ Member Entity
 1:다 다:1 로풀어내서 사용하자
 
 ```
+
+##### N:M 다대다 관계 단방향 (아예 쓰면안되욤)
+
+```java
+MemberEntity
+*M:N 다대다 관계 
+    @ManyToMany
+    @JoinTable(name = "MEMBER_PRODUCT")
+    private List<Product> products = new ArrayList<>();
+
+
+Product Entity생성 
+   @Id
+    @GeneratedValue
+    private Long id;
+
+    private String name;
+
+```
