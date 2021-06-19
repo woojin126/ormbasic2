@@ -87,8 +87,7 @@ public class JpaMain {
             em.persist(team);
 
             tx.commit();
-
-ff
+            
 
             
         }catch(Exception e){
