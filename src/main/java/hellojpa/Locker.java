@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/*
 @Entity
 @Getter
 @Setter
@@ -20,3 +21,4 @@ public class Locker {
     @OneToOne(mappedBy = "locker")
     private Member member;
 }
+*/
