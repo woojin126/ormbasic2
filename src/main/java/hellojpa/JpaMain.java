@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /*ormbasic2 깃허브연결*/
@@ -14,13 +15,13 @@ import java.time.LocalDateTime;
 @Slf4j
 public class JpaMain {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpabook");
         EntityManager em = emf.createEntityManager();
 
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        try{
+        try {
       /*    N : 1
        Team team = new Team();
             team.setName("TeamA");
@@ -122,7 +123,7 @@ public class JpaMain {
 
             Movie findMovie = em.find(Movie.class, movie.getId());
             System.out.println("findMove = " + findMovie); //find 하려면 조인해서 가져옴*/
-
+/*
             //@MappedSuperclass
             Member member = new Member();
             member.setUsername("user1");
@@ -134,15 +135,125 @@ public class JpaMain {
             //em.find(BaseEntity.class)//이런거안됨
 
             em.flush();
+            em.clear();*/
+
+            /**
+             * 프록시 특징
+             * 1.실제 Entity 클래스를 상속받아서사용
+             * 2.실제 클래스와 겉 모양이 같다
+             * 3.사용하는 입장에서는 진짜 객체인지 프록시 객체인지 구분하지 않고
+             * 사용하면 됨 (이론상)
+             */
+            /**
+             * 프록시 특징2
+             * 1.프록시 객체는 처음 사용할 때 한 번만 초기화
+             * 2.프록시 개체를 초기화 할 때, 프록시 객체가 실제 엔티티로 바뀌는 것은 아니다,
+             * 초기화되면 프록시 객체를 통해서 실제 엔티티에 접근 가능
+             * 3.프록시 객체는 원본 엔티티를 상속받음, 따라서 타입 체크시 주의해야함( == 비교실패,
+             * 대신 instance of를 사용해야함)
+             */
+          /*  //프록시 확인
+            Member member = new Member();
+            member.setUsername("hello");
+
+            em.persist(member);
+
+            em.flush();
             em.clear();
-            tx.commit();
 
 
+           // Member findMember = em.find(Member.class, member.getId());
+            Member findMember = em.getReference(Member.class,member.getId());//값이 사용되는시점에 쿼리가 나감 (getUserName)부터 ,getId는 이미 인자로 사용해서
+            //디비에서 안가져와도 알수있으니 getId에서는 실행안함 (프록시사용)//프록시 가짜클래스
+            System.out.println("findMember = " + findMember.getClass());
+            System.out.println("findMember.id = " + findMember.getId());
+            System.out.println("findMember.getUsername() = " + findMember.getUsername());
+            System.out.println("findMember.getUsername() = " + findMember.getUsername());//여기서는 sql 생성안됨 위에서이미해서
+*/
+
+            /**
+             *   ==을 사용하면안되는 이유 써줌 //JPA 는 같은 트랜잭션 내에서 수행되는 값은 항상 == 를 충족시켜야함 그런데 reference(),find() 를  == 비교하면 false
+             *             가뜸 instanceOf로 비교하자 프록시 객체는
+             */
+            /*
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member");
+            em.persist(member);
+
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setTeam(team);
+            em.persist(member1);
+
+
+            em.flush();
+            em.clear();
+           /*
+            Member m = em.find(Member.class, member.getId());
+            //Member m1 = em.find(Member.class, member1.getId());
+            Member m1 = em.getReference(Member.class, member1.getId());
+
+            System.out.println("findMember.username = "+ m1.getUsername());
+            System.out.println("m1 == m2" + (m1.getClass() == m.getClass()));//find == find true ,find == getreference false
+            System.out.println("m1 == m2" + (m instanceof Member));//이런식으로 써야함
+            System.out.println("m1 == m2" + (m1 instanceof Member));//이런식으로 써야함*/
+
+           
+
+            /*System.out.println("=======================================");
+            //detach 영속 상태에서 제외 시켜보기 프록시가 동작하는지 않하는지
+            Member detatchMember = em.getReference(Member.class,member.getId());
+            System.out.println("refMember = " + detatchMember.getClass());//proxy
+
+            em.detach(detatchMember);//프록시는 데이터요청을 영속성 컨텍스트를 통해서하는데 제외를 시켜버렸다. 그러면 아래 값이 호출될까?
+            //em.close();
+            detatchMember.getUsername();
+            //JPA 는 같은 트랜잭션 내에서 수행되는 값은 항상 == 를 충족시켜야함
+
+            */
+/*
+
+            System.out.println("===============================================");
+
+            Member refMember = em.getReference(Member.class,member1.getId());
+            System.out.println("refMember = " + refMember.getClass());
+            refMember.getUsername(); //초기화
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember));//프록시 초기화 여부확인
+*/
+
+            /**
+             *  //Member클래스  @ManyToOne(fetch = FetchType.LAZY) 사용시 결과확인
+             */
+   /*
+            Member m = em.find(Member.class,member1.getId());
+
+            System.out.println("m = " + m.getTeam().getClass());//LAZY로인해 팀은 proxy로 조회가됫음(지연로딩을 사용시 연관된 것을 프록시로 가져옴!)
+
+            System.out.println("=============");
+            m.getTeam().getName(); //프록시는 값을 사용하는시점에 초기화되면서 디비에 쿼리가나감!
+            System.out.println("=============");*/
+
+
+            /**
+             * FetchType.EAGER의 문제점
+             * JPQL 사용할때 EAGER 로되있으면 쿼리가 한번더나감;
+             */
+            List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
+                    .getResultList();
             
-        }catch(Exception e){
+            //SQL: select * from Member // 이렇게 쿼리가 나가겠지?  그런데 값을 반환하고보니 EAGER? 팀값도 같이 가져와야하네? 다시 반복
+            //SQL: select * from Team where TEAM_ID = XXX
+
+
+            tx.commit();
+        } catch (Exception e) {
             e.printStackTrace();
             tx.rollback(); //트랜잭션 롤백
-        }finally {
+        } finally {
             em.close();//엔티티 매니저 종료
         }
     }
