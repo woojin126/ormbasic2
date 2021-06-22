@@ -1,17 +1,18 @@
 package hellojpa;
 
 import lombok.extern.slf4j.Slf4j;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.time.LocalDateTime;
-import java.util.List;
 
 
 /*ormbasic2 깃허브연결*/
-
+/*
+깃 이그노어 동작하지않을때 대처
+git rm -r --cached .
+git add .
+*/
 @Slf4j
 public class JpaMain {
 
@@ -242,11 +243,47 @@ public class JpaMain {
              * FetchType.EAGER의 문제점
              * JPQL 사용할때 EAGER 로되있으면 쿼리가 한번더나감;
              */
-            List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
+     /*       List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
                     .getResultList();
             
             //SQL: select * from Member // 이렇게 쿼리가 나가겠지?  그런데 값을 반환하고보니 EAGER? 팀값도 같이 가져와야하네? 다시 반복
-            //SQL: select * from Team where TEAM_ID = XXX
+            //SQL: select * from Team where TEAM_ID = XXX*/
+
+            /**
+             * CASCADE 영속성전이
+             * 연관 관게와는 관련 x
+             * parent를 persist 할떄 그자식들도 모두 persist 를 해줄거야 라는것,
+             * 
+             * tip)
+             * 1.반드시 하나의부모가 자식들을 관리할때 써야함 (다른부모가 같은 자식을 관리하면 절대 x) == 소유자가 하나일떄만 쓰자
+             * 2.부모와 자식의 life Cycle이 유사할때 쓰는게좋음( 등록이나,삭제,등등)
+             */
+
+
+            Child child1 = new Child();
+            Child child2 = new Child();
+
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+            em.persist(parent); //코드가너무많아 parent 를 persist할때 child도 같이 persist햇으면 좋겠따
+            //em.persist(child1);
+           // em.persist(child2);
+
+            em.flush();
+            em.clear();
+
+
+            /**
+             * 고아객체 삭제  orphanRemoval = true
+             * 
+             * 1.참조하는 곳이 하나 일때 사용해야함!
+             * 2.특정 엔티티가 (부모가) 개인 소유할 때 사용
+             * @OneToOne  @OneToMany만 사용
+             */
+            Parent findParent =  em.find(Parent.class,parent.getId());
+            findParent.getChildList().remove(0);
 
 
             tx.commit();
