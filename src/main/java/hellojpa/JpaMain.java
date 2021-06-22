@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 
 
 /*ormbasic2 깃허브연결*/
@@ -249,7 +250,7 @@ public class JpaMain {
             //SQL: select * from Member // 이렇게 쿼리가 나가겠지?  그런데 값을 반환하고보니 EAGER? 팀값도 같이 가져와야하네? 다시 반복
             //SQL: select * from Team where TEAM_ID = XXX*/
 
-            /**
+         /*   *//**
              * CASCADE 영속성전이
              * 연관 관게와는 관련 x
              * parent를 persist 할떄 그자식들도 모두 persist 를 해줄거야 라는것,
@@ -257,7 +258,7 @@ public class JpaMain {
              * tip)
              * 1.반드시 하나의부모가 자식들을 관리할때 써야함 (다른부모가 같은 자식을 관리하면 절대 x) == 소유자가 하나일떄만 쓰자
              * 2.부모와 자식의 life Cycle이 유사할때 쓰는게좋음( 등록이나,삭제,등등)
-             */
+             *//*
 
 
             Child child1 = new Child();
@@ -275,15 +276,85 @@ public class JpaMain {
             em.clear();
 
 
-            /**
+            *//**
              * 고아객체 삭제  orphanRemoval = true
              * 
              * 1.참조하는 곳이 하나 일때 사용해야함!
              * 2.특정 엔티티가 (부모가) 개인 소유할 때 사용
              * @OneToOne  @OneToMany만 사용
-             */
+             *//*
             Parent findParent =  em.find(Parent.class,parent.getId());
             findParent.getChildList().remove(0);
+
+            *//**
+             * 영속성 전이 + 고아 객체, 생명주기
+             * 1.CascadeType.ALL + orphanRemovel=true
+             * 2.스스로 생명주기를 관리하는 엔티티는 em.persist()로 영속화, em.remove()로 제거
+             * 3.두 옵션을 모두 활성화 하면 부모 엔티티를 통해서 자식의 생명 주기를 관리할 수 있음
+             * 4.도메인 주도 설계(DDD)의 Aggregate Root 개념을 구현할 때 유용
+             */
+
+
+            /**
+             * Embedded 타입
+             * 1.임베디드 타입은 엔티티의 값일 뿐이다.
+             * 2.임베디드 타입을 사용하기 전과 후에 매핑하는 테이블은 같다
+             * 3.객체와 테이블을 아주 세밀하게(find-grained) 매핑하는 것이 가능
+             * 4.잘 설계한 ORM 애플리케이션은 매핑한 테이블의 수보다 클래스의 수가 더많음
+             */
+          /*  Address homeAddress = new Address("city", "street", "zipcodes");
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(homeAddress);
+            em.persist(member);
+            
+            //그냥 값을바꾸려면 통으로 다교체
+            Address newAddress = new Address("NEWCITY", homeAddress.getStreet(), homeAddress.getZipcodes());
+            member.setHomeAddress(newAddress);*/
+
+            
+
+            /**
+             *  //member1 만 바꾸고싶다면
+             *  값 타입의 실제 인스턴스인 값을 공유하는 것은 위험.
+             *  대신 값(인스턴스)를 복사해서 사용
+             *
+             *  하지만 이마저도 객체 타입의 한계가있음
+             *  1.항상 값을 복사해서 사용하면 공유 참조로 인해 발생하는 부작용을 피할수는 잇다.
+             *  2.문제는 임베디드 타입처럼 직접 정의한 값 타입은 자바의 기본 타입이 아니라 객체 타입이다.
+             *  3.자바 기본 타입에 값을 대입하면 값을 복사한다.
+             *  4.객체 타입은 참조 값을 직접 대입하는 것을 막을 방법이없음
+             *  ex)member2.setHomeAddress(member.getHomeAddress()) <- 이것을 막을수가없음
+             *  5.객체의 공유 참조는 피할 수 없음..
+             *
+             *  대안) 불변 객체로 설계
+             *  1.객체 타입을 수정할 수 없게 만들면 부작용을 원천 차단
+             *  2.값 타입은 불변 객체(immutable object)로 설계 해야함
+             *  3.불변 객체: 생성 시점 이후 절대 값을 변경할 수 없는 객체
+             *  4.생성자로만 값을 설정하고 수정자(Setter)을 만들지 않으면 됨
+             *  참고:Integer,String은 자바가 제고하는 대표전인 불변 객체
+             */
+
+           /* Address copyAddress = new Address(homeAddress.getCity(), homeAddress.getStreet(), homeAddress.getZipcodes());
+
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            member2.setHomeAddress(copyAddress);//기존값은 유지하기위해
+            em.persist(member2);*/
+
+
+            /**
+             * 아래코드
+             * 내의도는 첫번째 맴버만 newCity로 바꾸고싶다 결과는 맴버 1,2 둘다바뀜
+             *
+             * 주의점
+             * 1.임베디드 타입 같은 값 타입을 여러 엔티티에서 공윺하면 정말 위험
+             * 2.부작용 발생
+             * 3.내가 일부로 두객체를 한번에 바꾸려도 의도했다? (그러면 Address를 Entity로 바꿔서 해야함)
+             */
+            //member.getHomeAddress().setCity("newCity");//위험 그럼 어떻게 값을 바꿔야할까?
+
 
 
             tx.commit();
