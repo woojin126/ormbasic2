@@ -6,6 +6,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 
 /*ormbasic2 깃허브연결*/
@@ -355,7 +357,60 @@ public class JpaMain {
              */
             //member.getHomeAddress().setCity("newCity");//위험 그럼 어떻게 값을 바꿔야할까?
 
+            /**
+             * 값 타입 컬렉션 사용
+             * Member 클래스 안에 필드들은 다 값타입 이라보면됨, em.persist(member) 한방으로
+             * 임베디드건,등등이 다 알아서 저장됨,  (각필드 ,임베디드등이 member의 생명주기에 의존한다)
+             */
 
+            System.out.println("================값 타입 저장 ================");
+            Member member = new Member();
+            member.setUsername("우진");
+            member.setHomeAddress(new Address("homeCity","street","zipcode"));
+
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
+
+            member.getAddressHistory().add(new Address("old1","street","zipcode"));
+            member.getAddressHistory().add(new Address("old2","street","zipcode"));
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            System.out.println("===================값타입 조회===================");
+            //값 타입 조회
+       /*     Member findMember = em.find(Member.class, member.getId());
+
+            List<Address> addressHistory = findMember.getAddressHistory();
+
+            for(Address address : addressHistory){ //컬렉션은 기본이 지연로딩
+                System.out.println("address = " + address.getCity());
+            }
+
+            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+
+            for(String favoriteFood : favoriteFoods){//컬렉션은 기본이 지연로딩
+                System.out.println("favoriteFood = " + favoriteFood);
+            }*/
+            System.out.println("=================값 타입 수정==================");
+            //갑 타입 수정
+            Member findMember = em.find(Member.class, member.getId());
+            //homeCity -> newCity
+            //findMember.getHomeAddress().setCity("newCity");//값타입은 이뮤터블로 설계 이렇게 x
+            //Address old = findMember.getHomeAddress();
+            //findMember.setHomeAddress(new Address("newCity",old.getStreet(),old.getZipcodes()));//완전 갈아끼워라
+           
+            //값타입 컬렉션 업데이트 치킨 -> 한식
+            //findMember.getFavoriteFoods().remove("치킨");
+           // findMember.getFavoriteFoods().add("한식");
+
+            //주소 변경
+
+            findMember.getAddressHistory().remove(new Address("old1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
+            findMember.getAddressHistory().add(new Address("newCity1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
 
             tx.commit();
         } catch (Exception e) {
