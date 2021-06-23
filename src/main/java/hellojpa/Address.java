@@ -7,8 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@Embeddable //임베디드는 불변 객체 설계 (생성자만 사용) setter은 절대 x
+@Embeddable //임베디드(값타입)는 불변 객체 설계 (생성자만 사용) setter은 절대 함부로 쓰면안됨
 @Getter
+@Setter
 public class Address {
     private String city;
     private String street;

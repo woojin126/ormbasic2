@@ -21,9 +21,11 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
+
     //기간 period
     @Embedded
     private Period workPeriod;
+
 
     //주소
     @Embedded
@@ -35,6 +37,7 @@ public class Member extends BaseEntity {
      * 2.@ElementCollection, @CollectionTable 사용
      * 3.데이터베이스는 컬렉션을 같은 테이블에 저장할 수 없음
      * 컬렉션을 저장하기 위한 별도의 테이블이 필요
+     * 4.컬렉션은 기본적으로 지연로딩 사용!
      */
     @ElementCollection //값 타입 컬렉션입니다 
     @CollectionTable(name ="FAVORITE_FOOD",joinColumns = @JoinColumn(name = "MEMBER_ID")) //컬렉션 테이블 생성,외래키로지정 만들어질 테이블에
