@@ -4,15 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter @Setter
-public class Member extends BaseEntity {
+/*extends BaseEntity*/
+public class Member  {
 
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
@@ -21,10 +18,12 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
+/*
 
     //기간 period
     @Embedded
     private Period workPeriod;
+*/
 
 
     //주소
@@ -44,9 +43,16 @@ public class Member extends BaseEntity {
     @Column(name = "FOOD_NAME")
     private Set<String> favoriteFoods = new HashSet<>();
 
-    @ElementCollection
+
+ /*   @ElementCollection
     @CollectionTable(name ="ADDRESS",joinColumns = @JoinColumn(name = "MEMBER_ID"))
-    private List<Address> addressHistory = new ArrayList<>();
+    private List<Address> addressHistory = new ArrayList<>();*/
+    //위대신 아래 엔티티로 매핑 하자
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID") //1대 다 단방향
+    private List<AddressEntity> addressHistory = new ArrayList<>();
+
 
     /**
      * @AttributeOverride:속성 재정의
@@ -54,14 +60,14 @@ public class Member extends BaseEntity {
      * 2.컬럼 명이 중복됨
      * 3. @AttributeOverrides, @AttributeOverride 를 사용해서 컬럼 명 속성을 재정의
      */
-   /* @Embedded
+  /*  @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="city", column = @Column(name = "WORK_CITY")), //디비컬럼은 따로매핑
             @AttributeOverride(name="street", column = @Column(name = "WORD_STREET")),
             @AttributeOverride(name="zipcodes", column = @Column(name = "WORK_ZIPCODES"))
     })
-    private Address workAddress;//같은 주소가있다면? 위에처럼 새로 오버라이드*/
-
+    private Address workAddress;//같은 주소가있다면? 위에처럼 새로 오버라이드
+*/
  /*   @ManyToOne//oneToMany쪽이 주인
     @JoinColumn(name = "TEAM_ID",insertable = false,updatable = false)
     private Team team;*/
@@ -117,4 +123,17 @@ public class Member extends BaseEntity {
         this.locker = locker;
         locker.setMember(this);
     }*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(getId(), member.getId()) && Objects.equals(getUsername(), member.getUsername()) && Objects.equals(getHomeAddress(), member.getHomeAddress()) && Objects.equals(getFavoriteFoods(), member.getFavoriteFoods()) && Objects.equals(getAddressHistory(), member.getAddressHistory()) && Objects.equals(getTeam(), member.getTeam());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUsername(), getHomeAddress(), getFavoriteFoods(), getAddressHistory(), getTeam());
+    }
 }
