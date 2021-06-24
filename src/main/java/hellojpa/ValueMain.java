@@ -4,10 +4,26 @@ public class ValueMain {
 
     public static void main(String[] args){
 
-        int a=10;
-        int b=10;
+       /* int a=10;
+        int b=10;*/
 
-        System.out.println("a == b " + (a==b)); //기본타입은 true (내부에 값이 10 10 )
+        int a = 10;
+        int b= a;
+        b = 4;
+        System.out.println("a = " + a);
+        System.out.println("b = " + b);
+
+        Address aa = new Address();
+        aa.setCity("Old");
+
+        Address bb = aa;
+        bb.setCity("New");
+
+        System.out.println("aa = " + aa);
+        System.out.println("bb = " + bb);
+
+
+       // System.out.println("a == b " + (a==b)); //기본타입은 true (내부에 값이 10 10 )
 
         Address homeAddress1 = new Address("city", "street", "zipcodes");
         Address homeAddress2 = new Address("city", "street", "zipcodes");
