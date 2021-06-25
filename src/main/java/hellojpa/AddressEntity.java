@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Getter
 @Setter
-@Table(name = "ADDRESS")
+@Table(name = "ADDRESSTABLE")
 public class AddressEntity { //엔 엔티티
 
     @Id @GeneratedValue
