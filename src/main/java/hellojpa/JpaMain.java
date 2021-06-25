@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.text.CharacterIterator;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -58,15 +59,20 @@ public class JpaMain {
             findMember.setTeam(newTeam);
 */
 
-   /*        // 양방향 연관관계의 예제 N:1
+           // 양방향 연관관계의 예제 N:1
 
-            Team team = new Team();
+          /*  Team team = new Team();
             team.setName("TeamA");
             em.persist(team);
 
             Member member = new Member();
             member.setUsername("member1");
             em.persist(member);
+
+            Member member1 = new Member();
+            member1.setUsername("member2");
+            em.persist(member1);
+            member1.changeTeam(team);
             member.changeTeam(team); //양쪽에 값이들어가기하기위한 기준을 Member에서 작성
             //team.addMember(member); //양쪽에 값이 들어가기 위한 기준을 team에서작성 해도됨
 
@@ -79,8 +85,8 @@ public class JpaMain {
             }
 
             Member findMember = em.find(Member.class,member.getId());
-            System.out.println("getName"+findMember.getTeam().getName());*/
-
+            System.out.println("getName"+findMember.getTeam().getName());
+*/
          /*   //1 : N 단방향 관계
 
             Member member = new Member();
@@ -246,13 +252,16 @@ public class JpaMain {
              * FetchType.EAGER의 문제점
              * JPQL 사용할때 EAGER 로되있으면 쿼리가 한번더나감;
              */
-     /*       List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
+             /*
+             List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
                     .getResultList();
             
             //SQL: select * from Member // 이렇게 쿼리가 나가겠지?  그런데 값을 반환하고보니 EAGER? 팀값도 같이 가져와야하네? 다시 반복
-            //SQL: select * from Team where TEAM_ID = XXX*/
+            //SQL: select * from Team where TEAM_ID = XXX
+            */
 
-         /*   *//**
+
+            /**
              * CASCADE 영속성전이
              * 연관 관게와는 관련 x
              * parent를 persist 할떄 그자식들도 모두 persist 를 해줄거야 라는것,
@@ -260,11 +269,16 @@ public class JpaMain {
              * tip)
              * 1.반드시 하나의부모가 자식들을 관리할때 써야함 (다른부모가 같은 자식을 관리하면 절대 x) == 소유자가 하나일떄만 쓰자
              * 2.부모와 자식의 life Cycle이 유사할때 쓰는게좋음( 등록이나,삭제,등등)
-             *//*
+             */
 
 
-            Child child1 = new Child();
+        /*    Child child1 = new Child();
             Child child2 = new Child();
+            
+            child1.setName("우진");
+            child2.setName("김영훈");
+
+
 
             Parent parent = new Parent();
             parent.addChild(child1);
@@ -277,8 +291,16 @@ public class JpaMain {
             em.flush();
             em.clear();
 
+            Parent parents = em.find(Parent.class, 1L);
+            parents.getChildList().remove(1);
 
-            *//**
+            em.flush();
+            em.clear();
+*/
+
+
+
+            /**
              * 고아객체 삭제  orphanRemoval = true
              * 
              * 1.참조하는 곳이 하나 일때 사용해야함!
@@ -288,7 +310,8 @@ public class JpaMain {
             Parent findParent =  em.find(Parent.class,parent.getId());
             findParent.getChildList().remove(0);
 
-            *//**
+            */
+            /**
              * 영속성 전이 + 고아 객체, 생명주기
              * 1.CascadeType.ALL + orphanRemovel=true
              * 2.스스로 생명주기를 관리하는 엔티티는 em.persist()로 영속화, em.remove()로 제거
@@ -363,23 +386,27 @@ public class JpaMain {
              * 임베디드건,등등이 다 알아서 저장됨,  (각필드 ,임베디드등이 member의 생명주기에 의존한다)
              */
 
-            System.out.println("================값 타입 저장 ================");
-            Member member = new Member();
-            member.setUsername("우진");
-            member.setHomeAddress(new Address("homeCity","street","zipcode"));
 
-            member.getFavoriteFoods().add("치킨");
-            member.getFavoriteFoods().add("족발");
-            member.getFavoriteFoods().add("피자");
+           /* System.out.println("================값 타입 저장 ================");
+            Member memberm = new Member();
+            memberm.setUsername("우진");
+            memberm.setHomeAddress(new Address("homeCity","street","zipcode"));
 
-            member.getAddressHistory().add(new Address("old1","street","zipcode"));
-            member.getAddressHistory().add(new Address("old2","street","zipcode"));
+            memberm.getFavoriteFoods().add("치킨");
+            memberm.getFavoriteFoods().add("족발");
+            memberm.getFavoriteFoods().add("피자");
 
-            em.persist(member);
+            memberm.getAddressHistory().add(new AddressEntity("old1","street","100001"));
+            //memberm.getAddressHistory().add(new AddressEntity("old2","street","10000"));
+            //memberm.getAddressHistory().add(new Address("old1","street","zipcode"));
+            //memberm.getAddressHistory().add(new Address("old2","street","zipcode"));
+
+            em.persist(memberm);
+
 
             em.flush();
             em.clear();
-
+*/
             System.out.println("===================값타입 조회===================");
             //값 타입 조회
        /*     Member findMember = em.find(Member.class, member.getId());
@@ -395,9 +422,45 @@ public class JpaMain {
             for(String favoriteFood : favoriteFoods){//컬렉션은 기본이 지연로딩
                 System.out.println("favoriteFood = " + favoriteFood);
             }*/
+
+            /**
+             * 값타입 컬렉션은 딲 사용할떄까 잇음
+             * ex) select box [치킨,피자] 멀티로 셀렉트가능하게 되있다고하자 체크체크
+             * 이렇게 단순할떄 사용 추적할 필요없고, 값이바껴도 업데이트할 필요가없을떄 사용하자 (아주단순할떄만),
+             *
+             * 그외에는 그냥 엔티티로 사용하자 아래처럼
+             *
+             * 식별자가 필요하고, 지속해서 값을 추적, 변경해야 한다면 그것은 값 타입이 아닌 엔티티
+             *
+             */
+            //임베디드 컬렉션 ENTITY로 감싸서 사용
+
+            AddressEntity addressEntity = new AddressEntity("old3","st","zip");
+            AddressEntity addressEntityy = new AddressEntity("old4","st","zip");
+
+            Member member = new Member();
+            member.setUsername("김우진");
+            member.getAddressHistory().add(addressEntity);
+            member.getAddressHistory().add(addressEntityy);
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            Member findMember = em.find(Member.class, member.getId());
+            AddressEntity findAddress = em.find(AddressEntity.class,addressEntity.getId());
+
+            findMember.getAddressHistory().get(1).setAddress(new Address("1","2","#"));
+
+            em.flush();
+            em.clear();
+
+
+
+
             System.out.println("=================값 타입 수정==================");
             //갑 타입 수정
-            Member findMember = em.find(Member.class, member.getId());
+            //Member findMembers = em.find(Member.class, member.getId());
             //homeCity -> newCity
             //findMember.getHomeAddress().setCity("newCity");//값타입은 이뮤터블로 설계 이렇게 x
             //Address old = findMember.getHomeAddress();
@@ -409,8 +472,11 @@ public class JpaMain {
 
             //주소 변경
 
-            findMember.getAddressHistory().remove(new Address("old1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
-            findMember.getAddressHistory().add(new Address("newCity1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
+            //findMember.getAddressHistory().remove(new Address("old1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
+            //findMember.getAddressHistory().add(new Address("newCity1","street","zipcode")); //equals로 지워줌 (재대로 선언해야함)
+            //findMembers.getAddressHistory().set(0,new AddressEntity("old3","st","zip"));
+
+            //findMembers.getAddressHistory().remove(1l);
 
             tx.commit();
         } catch (Exception e) {
