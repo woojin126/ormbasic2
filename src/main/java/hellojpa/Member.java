@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -124,16 +127,5 @@ public class Member  {
         locker.setMember(this);
     }*/
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Member member = (Member) o;
-        return Objects.equals(getId(), member.getId()) && Objects.equals(getUsername(), member.getUsername()) && Objects.equals(getHomeAddress(), member.getHomeAddress()) && Objects.equals(getFavoriteFoods(), member.getFavoriteFoods()) && Objects.equals(getAddressHistory(), member.getAddressHistory()) && Objects.equals(getTeam(), member.getTeam());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getHomeAddress(), getFavoriteFoods(), getAddressHistory(), getTeam());
-    }
 }
