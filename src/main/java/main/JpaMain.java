@@ -1,5 +1,8 @@
-package hellojpa;
+package main;
 
+import hellojpa.Address;
+import hellojpa.AddressEntity;
+import hellojpa.Member;
 import lombok.extern.slf4j.Slf4j;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -433,7 +436,7 @@ public class JpaMain {
              * 식별자가 필요하고, 지속해서 값을 추적, 변경해야 한다면 그것은 값 타입이 아닌 엔티티
              *
              */
-            //임베디드 컬렉션 ENTITY로 감싸서 사용
+       /*     //임베디드 컬렉션 ENTITY로 감싸서 사용
 
             AddressEntity addressEntity = new AddressEntity("old3","st","zip");
             AddressEntity addressEntityy = new AddressEntity("old4","st","zip");
@@ -454,7 +457,7 @@ public class JpaMain {
 
             em.flush();
             em.clear();
-
+*/
 
 
 
