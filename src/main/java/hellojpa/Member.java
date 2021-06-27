@@ -47,14 +47,14 @@ public class Member  {
     private Set<String> favoriteFoods = new HashSet<>();
 
 
- /*   @ElementCollection
+    @ElementCollection
     @CollectionTable(name ="ADDRESS",joinColumns = @JoinColumn(name = "MEMBER_ID"))
-    private List<Address> addressHistory = new ArrayList<>();*/
+    private List<Address> addressHistory = new ArrayList<>();
     //위대신 아래 엔티티로 매핑 하자
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+  /*  @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "MEMBER_ID") //1대 다 단방향
-    private List<AddressEntity> addressHistory = new ArrayList<>();
+    private List<AddressEntity> addressHistory = new ArrayList<>();*/
 
 
     /**
