@@ -1,4 +1,8 @@
-package hellojpa;
+package main;
+
+import hellojpa.Address;
+import hellojpa.AddressEntity;
+import hellojpa.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,9 +40,9 @@ public class PracticeMain {
             member.getAddressHistory().add(new Address("old2","street","zipcode"));
     */
 
-            member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
+          /*  member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
             member.getAddressHistory().add(new AddressEntity("old2","street","zipcode"));
-
+*/
             em.persist(member);
 
             em.flush();
