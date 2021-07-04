@@ -1,4 +1,6 @@
-package hellojpa;
+package main;
+
+import hellojpa.Address;
 
 public class ValueMain {
 
