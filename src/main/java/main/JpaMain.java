@@ -255,13 +255,13 @@ public class JpaMain {
              * FetchType.EAGER의 문제점
              * JPQL 사용할때 EAGER 로되있으면 쿼리가 한번더나감;
              */
-             /*
-             List<Member> members = em.createQuery("select m from Member m join fetch m.team",Member.class)
+
+             List<Member> members = em.createQuery("select m from Member m join fetch m.team t",Member.class)
                     .getResultList();
             
             //SQL: select * from Member // 이렇게 쿼리가 나가겠지?  그런데 값을 반환하고보니 EAGER? 팀값도 같이 가져와야하네? 다시 반복
             //SQL: select * from Team where TEAM_ID = XXX
-            */
+
 
 
             /**
